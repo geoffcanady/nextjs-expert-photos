@@ -1,0 +1,38 @@
+{
+  "name": "next-expert-photos",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@design-tokens/intuit": "^11.18.5",
+    "@imgly/background-removal": "^1.4.5",
+    "@opentelemetry/api": "^1.1.0",
+    "@tensorflow/tfjs": "^4.17.0",
+    "@tensorflow/tfjs-node": "^4.17.0",
+    "@vladmandic/human": "^3.2.1",
+    "encoding": "^0.1.0",
+    "framer-motion": "^11.0.8",
+    "leva": "^0.9.35",
+    "next": "14.1.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "sass": "^1.3.0",
+    "seedrandom": "^3.0.5",
+    "styled-components": "^6.1.8",
+    "styled-normalize": "^8.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.1",
+    "html-loader": "^5.0.0",
+    "typescript": "^5"
+  }
+}

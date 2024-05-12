@@ -1,0 +1,27 @@
+"use client";
+
+import { AssetPrefixes } from "@/app/lib/types/enums";
+import Stage from "@/app/components/Stage";
+import Prompt from "@/app/components/Prompt";
+import FadeIn from "@/app/components/Fade/FadeIn";
+import StaticImg from "@/app/components/StaticImg";
+
+export default function OnboardingStep4() {
+  return (
+    <FadeIn>
+      <Stage>
+        <StaticImg
+          src={`${AssetPrefixes.SbsegExpertPhotos}/onboarding-photo-partner.webp`}
+          alt="We recommend having someone take a photo for you."
+          width={1000}
+          height={1000}
+          $responsive
+        />
+      </Stage>
+      <Prompt>
+        We recommend having someone take a photo for you. You may also take a
+        selfie.
+      </Prompt>
+    </FadeIn>
+  );
+}
