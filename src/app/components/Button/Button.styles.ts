@@ -1,11 +1,15 @@
 import styled from "styled-components";
-import { light } from "@design-tokens/intuit";
 import { ButtonProps } from "./ButtonPrimary";
 
 export const StyledButton = styled.button<ButtonProps>`
-  all: unset;
+  ${({ $block }) =>
+    $block
+      ? ``
+      : `
+      align-self: center;
+    `}
   align-items: center;
-  border-radius: ${light.radius.radiusMedium};
+  border-radius: 6px;
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
@@ -13,23 +17,27 @@ export const StyledButton = styled.button<ButtonProps>`
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  height: ${light.size.size12};
+  height: 48px;
   justify-content: center;
   line-height: 28px;
   opacity: ${({ disabled }) => (disabled ? "0.2" : 1)};
-  padding: 0 ${light.size.size2};
+  padding: 0 20px;
   transition: opacity 300ms;
   width: ${({ $block }) => ($block ? "100%" : "auto")};
+
+  svg {
+    margin-right: 8px;
+  }
 `;
 
 export const StyledButtonPrimary = styled(StyledButton)`
-  background-color: white;
-  border-color: white;
-  color: #236cff;
+  background-color: #2b77cc;
+  border-color: #2b77cc;
+  color: white;
 `;
 
-export const StyledButtonOutline = styled(StyledButton)`
-  background-color: transparent;
-  border-color: white;
-  color: white;
+export const StyledButtonSecondary = styled(StyledButton)`
+  background-color: #e2e9ed;
+  border-color: #e2e9ed;
+  color: #21262a;
 `;

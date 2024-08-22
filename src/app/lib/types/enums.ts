@@ -20,23 +20,34 @@ export enum OnboardingStepsMessages {
 }
 
 /**
- * Realtime video feedback.
+ * Realtime video feedback. Listed in order of feedback priority.
  */
 export enum GestureFeedbackMessages {
-  HeadTiltedUp = "Look forward",
-  HeadTiltedDown = "Look forward",
-  HeadTiltedLeft = "Look forward",
-  HeadTiltedRight = "Look forward",
-  HeadTurnedLeft = "Look forward",
-  HeadTurnedRight = "Look forward",
-  ShouldersInFrame = "Place your shoulders in the frame",
+  // Head / no head present.
+  NoFace = "No face detected",
+  // Proximity
   TooFar = "Move closer to the camera",
   TooClose = "Move away from the camera",
-  // Face outside of camera guide bounds
+  // Hands
+  Hands = "Keep your hands down",
+  // Centered vertically / horizontally w/in the camera guide
   OffCenter = "Center you face in the camera",
-  //
-  None = "Take a photo!",
+  // Chin turned left/right
+  HeadTurnedLeft = "Look forward",
+  HeadTurnedRight = "Look forward",
+  // Chin tilted up/down
+  HeadTiltedUp = "Look forward",
+  HeadTiltedDown = "Look forward",
+  // Head tilted towards shoulders
+  HeadTiltedLeft = "Look forward",
+  HeadTiltedRight = "Look forward",
+  // No position errors
+  Success = "Take a photo!",
+  // Dormant
+  Empty = "",
 }
+
+export type GestureFeedbackMessagesType = GestureFeedbackMessages | undefined;
 
 /**
  * Error messages for the Camera component instatiation.

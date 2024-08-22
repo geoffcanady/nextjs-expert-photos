@@ -1,33 +1,22 @@
 import styled from "styled-components";
-import { light } from "@design-tokens/intuit";
 
 export const StyledPromptContainer = styled.div`
-  padding: ${light.size.size4};
+  padding: 16px;
 `;
 
 export const StyledPrompt = styled.div<{ $alignment: string }>`
   align-items: center;
-  /* background-color: #2b3135; */
-  /* border-radius: ${light.radius.radiusLarge}; */
-  color: #fff;
+  color: #2b3135;
   display: flex;
-  font-size: 19px;
-  font-weight: 500;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
   justify-content: center;
-  line-height: 28px;
-  /** for empty prompts */
+  line-height: 30px;
   min-height: 62px;
-  /* padding: ${light.size.size4} 0; */
+  padding-top: 88px;
   text-align: ${({ $alignment }) =>
     $alignment === "left" ? "left" : "center"};
-
-  ol {
-    padding-inline-start: ${light.size.size8};
-  }
-
-  li {
-    margin-bottom: ${light.size.size2};
-  }
 `;
 
 export const StyledLoadingPrompt = styled.div`

@@ -20,7 +20,6 @@ export const Camera = forwardRef<unknown, CameraProps>(
     {
       aspectRatio = 1 / 1,
       errorMessages,
-      facingMode = "user",
       numberOfCamerasCallback = () => null,
       videoReadyCallback = () => null,
       videoSourceDeviceId = undefined,
@@ -34,17 +33,16 @@ export const Camera = forwardRef<unknown, CameraProps>(
     /**
      * Camera hooks & context
      */
-    const { setDetectionResults } = useCameraContext();
+    const { currentFacingMode, setDetectionResults } = useCameraContext();
     const { controls, humanIsReady, humanRef } = useHumanContext();
 
     const {
-      currentFacingMode,
       numberOfCameras,
       notSupported,
       permissionDenied,
       stream,
       switchCamera,
-    } = useCameraStream({ initialFacingMode: facingMode, videoSourceDeviceId });
+    } = useCameraStream({ videoSourceDeviceId, aspectRatio });
 
     const { detectionResults, fps } = useDetectAndDraw({
       canvasRef,
@@ -136,8 +134,9 @@ export const Camera = forwardRef<unknown, CameraProps>(
             videoReadyCallback();
           }}
           playsInline={true}
+          width={aspectRatio === "cover" ? "1280" : "1080"}
+          height={aspectRatio === "cover" ? "720" : "1080"}
         />
-
         <StyledCanvas ref={canvasRef} $showCanvas={controls.showDetection} />
       </>
     );

@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { light } from "@design-tokens/intuit";
 
 export const StyledLoadingContainer = styled.div`
   align-items: center;
+  border-radius: 100%;
   display: flex;
   justify-content: center;
   position: absolute;

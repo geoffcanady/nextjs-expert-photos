@@ -9,14 +9,15 @@ import React, {
 } from "react";
 
 import { Result } from "@vladmandic/human";
-import removeBackground from "@imgly/background-removal";
-import { CameraType } from "@/app/lib/types/types";
+import { removeBackground } from "@imgly/background-removal";
+import { CameraType, FacingMode } from "@/app/lib/types/types";
 import useFadeInOut from "@/app/lib/hooks/useFadeInOut";
 
 type DetectionResult = Result | null;
 
 interface CameraContextType {
   currentStep: number;
+  currentFacingMode: FacingMode;
   detectionResults: DetectionResult | null;
   imgBgRemovedUrl: string | undefined;
   isBgRemoved: boolean;
@@ -28,6 +29,7 @@ interface CameraContextType {
   handleNextStep: () => void;
   handlePrevStep: () => void;
   handleTakePhoto: (camera: RefObject<CameraType>) => void;
+  setCurrentFacingMode: React.Dispatch<React.SetStateAction<FacingMode>>;
   setDetectionResults: React.Dispatch<
     React.SetStateAction<DetectionResult | null>
   >;
@@ -50,13 +52,15 @@ interface CameraProviderProps {
 }
 
 export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
+  const [currentFacingMode, setCurrentFacingMode] =
+    useState<FacingMode>("user");
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [detectionResults, setDetectionResults] =
     useState<DetectionResult | null>(null);
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [photos, setPhotos] = useState<string[]>([]);
   const [imgBgRemovedUrl, setImgBgRemovedUrl] = useState<string>("");
   const [isBgRemoved, setIsBgRemoved] = useState<boolean>(false);
   const [isVideoReady, setIsVideoReady] = useState<boolean>(false);
+  const [photos, setPhotos] = useState<string[]>([]);
   const { showFade, triggerFade } = useFadeInOut(300);
 
   const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
@@ -87,6 +91,7 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
   return (
     <CameraContext.Provider
       value={{
+        currentFacingMode,
         currentStep,
         detectionResults,
         imgBgRemovedUrl,
@@ -99,6 +104,7 @@ export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
         handleNextStep,
         handlePrevStep,
         handleTakePhoto,
+        setCurrentFacingMode,
         setDetectionResults,
         setIsVideoReady,
         setPhotos,

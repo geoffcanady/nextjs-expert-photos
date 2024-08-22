@@ -9,14 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@design-tokens/intuit": "^11.18.5",
     "@imgly/background-removal": "^1.4.5",
     "@opentelemetry/api": "^1.1.0",
     "@tensorflow/tfjs": "^4.17.0",
     "@tensorflow/tfjs-node": "^4.17.0",
     "@vladmandic/human": "^3.2.1",
     "encoding": "^0.1.0",
-    "framer-motion": "^11.0.8",
+    "framer-motion": "^11.3.28",
     "leva": "^0.9.35",
     "next": "14.1.1",
     "react": "^18",
