@@ -126,6 +126,8 @@ export const useGestureFeedback = (detectionResults: Result | null) => {
         clearTimeout(errorTimeoutRef.current);
       }
 
+      setGestureFeedbackMsg(GestureFeedbackMessages.Empty);
+
       errorTimeoutRef.current = setTimeout(() => {
         setGestureFeedbackMsg(feedbackMessage);
 
