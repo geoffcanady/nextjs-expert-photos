@@ -1,4 +1,3 @@
-import { light } from "@design-tokens/intuit";
 import styled from "styled-components";
 
 export const StyledCameraButton = styled.button`
@@ -17,7 +16,7 @@ export const StyledCameraButton = styled.button`
 `;
 
 export const StyledButtonRing = styled.div`
-  border-radius: ${light.radius.radiusCircle};
+  border-radius: 50%;
   box-shadow: 0 0 0 8px rgb(255 255 255 / 0.6);
   position: absolute;
   top: 50%;
@@ -28,7 +27,7 @@ export const StyledButtonRing = styled.div`
 `;
 
 export const StyledButtonInner = styled.div`
-  border-radius: ${light.radius.radiusCircle};
+  border-radius: 50%;
   background-color: white;
   flex: 1;
   width: 100%;

@@ -20,6 +20,31 @@ const useDetectAndDraw = ({
   const fpsRef = useRef(0);
   const { controls } = useHumanContext();
 
+  const detect = async () => {
+    if (humanRef?.current && videoRef.current) {
+      const results = await humanRef.current.detect(videoRef.current);
+      setDetectionResults(results);
+      return humanRef.current.next(humanRef.current.result);
+    }
+  };
+
+  const draw = (interpolated: Result) => {
+    if (
+      humanRef?.current &&
+      videoRef.current &&
+      canvasRef?.current &&
+      controls?.showDetection
+    ) {
+      humanRef.current.draw.options.drawLabels = false;
+      humanRef.current.draw.options.drawBoxes = false;
+      humanRef.current.draw.options.useCurves = false;
+      humanRef.current.draw.options.drawGestures = false;
+      // humanRef.current.draw.options.color = "#00FF00";
+      humanRef?.current.draw.canvas(videoRef?.current, canvasRef.current);
+      humanRef?.current.draw.all(canvasRef.current, interpolated);
+    }
+  };
+
   useEffect(() => {
     if (
       !humanIsReady ||
@@ -33,28 +58,22 @@ const useDetectAndDraw = ({
     let animationFrameId: number;
 
     const detectAndDraw = async () => {
-      if (humanRef.current && videoRef.current && canvasRef.current) {
-        const results = await humanRef.current.detect(videoRef.current);
-        const interpolated = humanRef.current.next(humanRef.current.result);
+      if (humanRef?.current) {
+        const interpolated = await detect();
 
-        if (controls?.showDetection) {
-          // humanRef.current.draw.options.drawGestures = false;
-          humanRef.current.draw.options.drawLabels = false;
-          humanRef.current.draw.canvas(videoRef.current, canvasRef.current);
-          humanRef.current.draw.all(canvasRef.current, interpolated);
+        if (controls.showDetection && interpolated) {
+          draw(interpolated);
         }
 
-        const now = humanRef.current.now();
+        const now = humanRef?.current.now();
 
         if (typeof now === "number") {
           fpsRef.current = 1000 / (now - timestampRef.current);
           timestampRef.current = now;
         }
 
-        setDetectionResults(results);
+        animationFrameId = requestAnimationFrame(detectAndDraw);
       }
-
-      animationFrameId = requestAnimationFrame(detectAndDraw);
     };
 
     detectAndDraw();

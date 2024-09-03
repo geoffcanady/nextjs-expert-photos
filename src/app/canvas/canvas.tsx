@@ -36,7 +36,7 @@ export default function CameraCanvas() {
   }, [devices, activeDeviceId]);
 
   return (
-    <div style={{ position: "relative", height: "100svh", width: "100%" }}>
+    <div style={{ position: "relative" }}>
       {detectionResults && controls?.showResults && (
         <DetectionOutput detectionResults={detectionResults} />
       )}

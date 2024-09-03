@@ -1,24 +1,26 @@
 import { useState, useEffect } from "react";
+import { AspectRatio } from "@/app/lib/types/types";
 import { initCameraStream } from "@/app/lib/utils/camera-utils";
-import { FacingMode, Stream } from "@/app/lib/types/types";
+import { Stream } from "@/app/lib/types/types";
+import { useCameraContext } from "../context/camera-context";
 
 export const useCameraStream = ({
-  initialFacingMode,
+  aspectRatio,
   videoSourceDeviceId,
 }: {
-  initialFacingMode: FacingMode;
+  aspectRatio: AspectRatio;
   videoSourceDeviceId: string | undefined;
 }) => {
   const [stream, setStream] = useState<Stream>(null);
   const [numberOfCameras, setNumberOfCameras] = useState<number>(0);
-  const [currentFacingMode, setCurrentFacingMode] =
-    useState<FacingMode>(initialFacingMode);
   const [notSupported, setNotSupported] = useState<boolean>(false);
   const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
+  const { currentFacingMode, setCurrentFacingMode } = useCameraContext();
 
   useEffect(() => {
     const updateStreamAndCameras = async () => {
       initCameraStream({
+        aspectRatio,
         currentFacingMode,
         stream,
         setStream,
@@ -45,7 +47,6 @@ export const useCameraStream = ({
   };
 
   return {
-    currentFacingMode,
     stream,
     numberOfCameras,
     notSupported,

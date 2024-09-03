@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   FacingMode,
   Stream,
   SetStream,
@@ -7,8 +8,10 @@ import {
   SetPermissionDenied,
   Navigator,
 } from "@/app/lib/types/types";
+import getStreamResolution from "./getStreamResolution";
 
 interface CameraStreamProps {
+  aspectRatio: AspectRatio;
   stream: Stream;
   setStream: SetStream;
   currentFacingMode: FacingMode;
@@ -19,6 +22,7 @@ interface CameraStreamProps {
 }
 
 export const initCameraStream = ({
+  aspectRatio,
   currentFacingMode,
   stream,
   setStream,
@@ -41,8 +45,8 @@ export const initCameraStream = ({
         ? { exact: videoSourceDeviceId }
         : undefined,
       facingMode: currentFacingMode,
-      width: { ideal: 1920 },
-      height: { ideal: 1080 },
+      width: { ideal: aspectRatio === "cover" ? 1280 : 1080 },
+      height: { ideal: aspectRatio === "cover" ? 720 : 1080 },
     },
   };
 
@@ -53,6 +57,7 @@ export const initCameraStream = ({
       .getUserMedia(constraints)
       .then((stream) => {
         setStream(handleSuccess(stream, setNumberOfCameras));
+        getStreamResolution(stream);
       })
       .catch((err) => {
         handleError(err, setNotSupported, setPermissionDenied);

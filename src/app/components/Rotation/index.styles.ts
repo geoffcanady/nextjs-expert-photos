@@ -1,4 +1,3 @@
-import { light } from "@design-tokens/intuit";
 import styled, { keyframes } from "styled-components";
 
 const rotate = keyframes`

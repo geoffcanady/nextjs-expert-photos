@@ -1,1 +1,3 @@
-export { SinglePhoto } from "./SinglePhoto";
+import SinglePhoto from "./SinglePhoto";
+
+export { SinglePhoto };

@@ -1,55 +1,71 @@
-import { light } from "@design-tokens/intuit";
 import { useSteps } from "@/app/lib/context/step-context";
 import { useCameraContext } from "@/app/lib/context/camera-context";
-import Actions from "@/app/components/Actions";
-import ButtonOutline from "@/app/components/Button/ButtonOutline";
-import ButtonPrimary from "@/app/components/Button/ButtonPrimary";
-import { GradBg } from "@/app/styles/GlobalStyles";
-import Header from "@/app/components/Header";
-import { IconArrowLeft } from "@/app/components/Icons";
+import { StyledPhotoContainer } from "@/app/components/Photos/index.styles";
 import Prompt from "@/app/components/Prompt";
 import StaticImg from "@/app/components/StaticImg";
-import { StyledPhotoContainer } from "@/app/components/Photos/index.styles";
+import ButtonPrimary from "@/app/components/Button/ButtonPrimary";
+import ButtonSecondary from "../Button/ButtonSecondary";
+import {
+  StyledBottomCol,
+  StyledCol,
+  StyledActionsContainer,
+  StyledActionsContent,
+} from "@/app/styles/GlobalStyles";
+import Sparkles from "../Sparkles";
 
 export default function CameraStep4() {
   const { handleBgReset, imgBgRemovedUrl, setPhotos } = useCameraContext();
   const { setCurrentStep } = useSteps();
 
   return (
-    <GradBg>
-      <Header />
-      <StyledPhotoContainer>
-        {imgBgRemovedUrl && (
-          <StaticImg
-            src={imgBgRemovedUrl}
-            alt="Select the image or re-take your photo."
-            style={{
-              backgroundColor: "white",
-              borderRadius: light.radius.radiusCircle,
-              height: "auto",
-              objectFit: "cover",
-              transform: "scaleX(-1)",
-              width: "100%",
-            }}
-            width={1000}
-            height={1000}
-          />
-        )}
-      </StyledPhotoContainer>
-      <Prompt>
-        Well done! If everything looks good, submit your official profile photo
-      </Prompt>
-      <Actions>
-        <ButtonOutline
-          icon={<IconArrowLeft />}
-          onClick={() => {
-            handleBgReset();
-            setCurrentStep(4);
-            setPhotos([]);
-          }}
-        />
-        <ButtonPrimary label="Submit photo" onClick={() => {}} $block="true" />
-      </Actions>
-    </GradBg>
+    <>
+      <StyledCol>
+        <StyledPhotoContainer>
+          <Sparkles />
+          {imgBgRemovedUrl && (
+            <StaticImg
+              src={imgBgRemovedUrl}
+              alt="Select the image or re-take your photo."
+              style={{
+                backgroundColor: "white",
+                borderRadius: "50%",
+                boxShadow: "0px 4px 16px 0 rgba(0, 0, 0, 0.2)",
+                height: "auto",
+                objectFit: "cover",
+                transform: "scaleX(-1)",
+                width: "100%",
+              }}
+              width={1000}
+              height={1000}
+            />
+          )}
+        </StyledPhotoContainer>
+      </StyledCol>
+
+      <StyledBottomCol>
+        <StyledActionsContent>
+          <Prompt>
+            Well done! <br />
+            If everything looks good, click Submit photo.
+          </Prompt>
+          <StyledActionsContainer>
+            <ButtonSecondary
+              label="Retake"
+              onClick={() => {
+                handleBgReset();
+                setCurrentStep(2);
+                setPhotos([]);
+              }}
+              $block="true"
+            />
+            <ButtonPrimary
+              label="Submit photo"
+              onClick={() => {}}
+              $block="true"
+            />
+          </StyledActionsContainer>
+        </StyledActionsContent>
+      </StyledBottomCol>
+    </>
   );
 }

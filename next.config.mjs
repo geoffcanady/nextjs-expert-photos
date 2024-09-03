@@ -8,7 +8,12 @@ const nextConfig = {
   },
   output: "export",
 
-  // ** Build
+  /** To build for
+   *
+   * 1. Uncomment `basepath`
+   * 2. Go to `types/enums.ts` and update AssetPrefixes to use `SbsegExpertPhotos`
+   */
+
   // basePath: "/prototypes/gcanady/expert-photos",
 
   // ** Build (optional) ** change the output directory `out` -> `dist`

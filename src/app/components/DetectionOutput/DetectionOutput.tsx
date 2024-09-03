@@ -43,16 +43,16 @@ export default function DetectionOutput({
 
   return (
     <StyledOutputContainer $micro={$micro}>
-      <StyledSectionTitle $micro={$micro}>Face</StyledSectionTitle>
-      <StyledOutputValue
+      {/* <StyledSectionTitle $micro={$micro}>Face</StyledSectionTitle> */}
+      {/* <StyledOutputValue
         $micro={$micro}
-      >{`Gesture: ${results?.gesture[0]?.gesture}`}</StyledOutputValue>
-      <StyledOutputValue
+      >{`Gesture: ${results?.gesture[0]?.gesture}`}</StyledOutputValue> */}
+      {/* <StyledOutputValue
         $micro={$micro}
-      >{`Confidence: ${face?.score}`}</StyledOutputValue>
-      <StyledOutputValue
+      >{`Confidence: ${face?.score}`}</StyledOutputValue> */}
+      {/* <StyledOutputValue
         $micro={$micro}
-      >{`Iris gesture: ${results?.gesture[2]?.gesture}`}</StyledOutputValue>
+      >{`Iris gesture: ${results?.gesture[2]?.gesture}`}</StyledOutputValue> */}
 
       <StyledSectionTitle $micro={$micro}>Face position</StyledSectionTitle>
       <StyledOutputValue $micro={$micro}>
@@ -90,14 +90,14 @@ export default function DetectionOutput({
       {controls.rotation && (
         <>
           <StyledSectionTitle $micro={$micro}>Rotation</StyledSectionTitle>
-          <StyledOutputValue $micro={$micro}>{`Pitch: chin up/down: ${
-            pitch ? pitch : ""
+          <StyledOutputValue $micro={$micro}>{`Yaw: chin left/right: ${
+            yaw ? yaw : ""
           }`}</StyledOutputValue>
           <StyledOutputValue $micro={$micro}>{`Roll: tilt left/right: ${
             roll ? roll : ""
           }`}</StyledOutputValue>
-          <StyledOutputValue $micro={$micro}>{`Yaw: chin left/right: ${
-            yaw ? yaw : ""
+          <StyledOutputValue $micro={$micro}>{`Pitch: chin up/down: ${
+            pitch ? pitch : ""
           }`}</StyledOutputValue>
         </>
       )}

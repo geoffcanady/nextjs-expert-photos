@@ -7,8 +7,6 @@ export const StyledErrorMessage = styled.div`
 `;
 
 export const StyledCanvasContainer = styled.div<{ $aspectratio: AspectRatio }>`
-  width: 100%;
-
   ${({ $aspectratio }) =>
     $aspectratio === "cover"
       ? `
@@ -19,7 +17,11 @@ export const StyledCanvasContainer = styled.div<{ $aspectratio: AspectRatio }>`
     right: 0;
     `
       : `
-    position: relative;
+      align-self: center;
+      position: absolute;
+      bottom: -100px;
+      width: clamp(320px, 100%, 400px); 
+      z-index: 200;
     `}
 `;
 
@@ -27,13 +29,17 @@ export const StyledVideo = styled.video<{
   $mirrored: boolean;
   $aspectratio: AspectRatio;
 }>`
-  aspect-ratio: 1/1;
-  height: 100%;
+  aspect-ratio: ${({ $aspectratio }) =>
+    $aspectratio === "cover" ? `16 / 9` : `1 / 1`};
+  background-color: black;
+  border-radius: ${({ $aspectratio }) =>
+    $aspectratio === "cover" ? `0` : `100%`};
   object-fit: cover;
   position: relative;
   transform: rotateY(${({ $mirrored }) => ($mirrored ? "180deg" : "0deg")});
-  width: 100%;
   z-index: 0;
+  width: 100%;
+  height: auto;
 `;
 
 export const StyledCanvas = styled.canvas<{
@@ -47,7 +53,7 @@ export const StyledCanvas = styled.canvas<{
   right: 0;
 
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
   z-index: 100;
   transform: rotateY(180deg);

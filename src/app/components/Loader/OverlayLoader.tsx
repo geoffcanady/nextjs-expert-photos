@@ -1,4 +1,3 @@
-import { light } from "@design-tokens/intuit";
 import { AssetPrefixes } from "@/app/lib/types/enums";
 import Rotation from "@/app/components/Rotation";
 import StaticImg from "@/app/components/StaticImg";
@@ -23,7 +22,7 @@ export function OverlayLoader() {
         src={`${AssetPrefixes.SbsegExpertPhotos}/mask-overlay-blue.png`}
         alt="Select the image or re-take your photo."
         style={{
-          borderRadius: light.radius.radiusCircle,
+          borderRadius: "50%",
           position: "absolute",
           top: 0,
           left: 0,
