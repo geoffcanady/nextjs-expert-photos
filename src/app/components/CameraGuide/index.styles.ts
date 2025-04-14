@@ -1,11 +1,10 @@
 import styled from "styled-components";
 
 export const CameraGuideContainer = styled.div`
-  height: 232px;
-  left: 50%;
+  height: auto;
+  left: 0;
+  top: 0;
   position: absolute;
-  top: 48%;
-  transform: translate3d(-50%, -50%, 0);
-  width: 179px;
+  width: 100%;
   z-index: 100;
 `;

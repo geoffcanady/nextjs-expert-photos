@@ -10,10 +10,11 @@ import StaticImg from "@/app/components/StaticImg";
 import Guidelines from "@/app/components/Guidelines";
 import {
   StyledActionsContainer,
-  StyledActionsContent,
+  StyledPanelContainer,
   StyledBottomCol,
   StyledCol,
   StyledTopCol,
+  StyledLogoCol,
 } from "@/app/styles/GlobalStyles";
 
 // for testing
@@ -39,27 +40,24 @@ export default function OnboardingStep1() {
 
   return (
     <>
-      <StyledCol>
-        <StyledTopCol>
-          <StaticImg
-            // src={`${AssetPrefixes.SbsegExpertPhotos}/logo-photo-booth-2.png`}
-            src={iconCameraBlue}
-            alt="Welcome to the Expert Photo Booth."
-            width={86}
-            height={86}
-          />
-          <StyledIntroTitle>Expert Photo Booth</StyledIntroTitle>
-        </StyledTopCol>
-        {/* <Sparkles /> */}
-      </StyledCol>
+      <StyledLogoCol>
+        <StaticImg
+          src={iconCameraBlue}
+          alt="Welcome to the Expert Photo Booth."
+          width={86}
+          height={86}
+        />
+        <StyledIntroTitle>Expert Photo Booth</StyledIntroTitle>
+      </StyledLogoCol>
+      {/* <Sparkles /> */}
 
       <StyledBottomCol>
-        <StyledActionsContent>
+        <StyledPanelContainer>
           <Guidelines />
           <StyledActionsContainer>
             <ButtonPrimary label="Start" onClick={handleNextStep} />
           </StyledActionsContainer>
-        </StyledActionsContent>
+        </StyledPanelContainer>
       </StyledBottomCol>
     </>
   );

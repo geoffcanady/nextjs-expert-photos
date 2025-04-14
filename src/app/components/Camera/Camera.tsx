@@ -12,7 +12,12 @@ import { useCameraContext } from "@/app/lib/context/camera-context";
 import { useCameraStream } from "@/app/lib/hooks/useCameraStream";
 import { useCamera } from "@/app/lib/hooks/useCamera";
 import useDetectAndDraw from "@/app/lib/hooks/useDetectAndDraw";
-import { StyledVideo, StyledErrorMessage, StyledCanvas } from "./Camera.styles";
+import {
+  StyledVideo,
+  StyledErrorMessage,
+  StyledCanvas,
+  StyledVideoContainer,
+} from "./Camera.styles";
 import { useHumanContext } from "@/app/lib/context/human-context";
 
 export const Camera = forwardRef<unknown, CameraProps>(
@@ -112,7 +117,7 @@ export const Camera = forwardRef<unknown, CameraProps>(
     }, [resizeCanvas]);
 
     return (
-      <>
+      <StyledVideoContainer>
         {notSupported ? (
           <StyledErrorMessage>
             {errorMessages.noCameraAccessible}
@@ -137,8 +142,8 @@ export const Camera = forwardRef<unknown, CameraProps>(
           width={aspectRatio === "cover" ? "1280" : "1080"}
           height={aspectRatio === "cover" ? "720" : "1080"}
         />
-        <StyledCanvas ref={canvasRef} $showCanvas={controls.showDetection} />
-      </>
+        <StyledCanvas ref={canvasRef} $showCanvas={controls?.showDetection} />
+      </StyledVideoContainer>
     );
   }
 );

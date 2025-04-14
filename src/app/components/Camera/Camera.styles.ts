@@ -3,7 +3,24 @@ import { AspectRatio } from "@/app/lib/types/types";
 import { ControlProps } from "@/app/lib/context/human-context";
 
 export const StyledErrorMessage = styled.div`
-  padding: 40px;
+  border: solid 1px #d4d7dc;
+  padding: 16px;
+  font-size: 12px;
+  border-radius: 8px;
+  position: absolute;
+  top: -30px;
+  z-index: 1000;
+  background: white;
+  width: 300px;
+  left: 10px;
+
+  @media (min-width: 768px) {
+    left: 50px;
+  }
+`;
+
+export const StyledVideoContainer = styled.div`
+  position: relative;
 `;
 
 export const StyledCanvasContainer = styled.div<{ $aspectratio: AspectRatio }>`
@@ -18,10 +35,13 @@ export const StyledCanvasContainer = styled.div<{ $aspectratio: AspectRatio }>`
     `
       : `
       align-self: center;
-      position: absolute;
-      bottom: -100px;
-      width: clamp(320px, 100%, 400px); 
+      position: relative;
+      width: 320px;
       z-index: 200;
+
+      @media(min-width: 768px) {
+        width: 400px;
+      } 
     `}
 `;
 
@@ -33,13 +53,18 @@ export const StyledVideo = styled.video<{
     $aspectratio === "cover" ? `16 / 9` : `1 / 1`};
   background-color: black;
   border-radius: ${({ $aspectratio }) =>
-    $aspectratio === "cover" ? `0` : `100%`};
+    $aspectratio === "cover" ? `0` : `8px`};
   object-fit: cover;
   position: relative;
   transform: rotateY(${({ $mirrored }) => ($mirrored ? "180deg" : "0deg")});
   z-index: 0;
   width: 100%;
   height: auto;
+
+  @media (min-width: 768px) {
+    border-radius: ${({ $aspectratio }) =>
+      $aspectratio === "cover" ? `0` : `16px`};
+  }
 `;
 
 export const StyledCanvas = styled.canvas<{

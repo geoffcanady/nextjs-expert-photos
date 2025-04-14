@@ -2,10 +2,16 @@ import styled from "styled-components";
 
 export const StyledPhotoContainer = styled.div`
   align-self: center;
-  position: absolute;
-  bottom: -100px;
-  width: clamp(320px, 100%, 400px);
+  /* margin-bottom: 24px; */
+  padding-top: 32px;
+  position: relative;
+  width: 320px;
   z-index: 200;
+
+  @media (min-width: 768px) {
+    padding-top: 42px;
+    width: 400px;
+  }
 `;
 
 export const SinglePhotoContainer = styled.div`

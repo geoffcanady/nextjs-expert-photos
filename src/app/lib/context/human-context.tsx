@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, {
@@ -8,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useControls, folder } from "leva";
+
 import { Human as HumanType } from "@vladmandic/human";
 import { humanConfig } from "@/app/lib/config/humanConfig";
 
@@ -26,7 +27,7 @@ export interface ControlProps {
 }
 
 interface HumanContextType {
-  controls: ControlProps;
+  controls?: ControlProps;
   humanIsReady: boolean;
   humanRef: React.RefObject<HumanType> | null;
 }
@@ -48,18 +49,6 @@ interface HumanProviderProps {
 }
 
 export const HumanProvider: React.FC<HumanProviderProps> = ({ children }) => {
-  const controls = useControls("Controls", {
-    showDetection: false,
-    Results: folder({
-      showResults: false,
-      faceGesture: true,
-      rotation: true,
-      body: false,
-      shoulders: false,
-      objects: false,
-    }),
-  });
-
   const [humanIsReady, setHumanIsReady] = useState(false);
   const humanRef = useRef<HumanType | null>(null);
 
@@ -76,12 +65,15 @@ export const HumanProvider: React.FC<HumanProviderProps> = ({ children }) => {
         const humanLib = new Human(humanConfig);
 
         // console.time("loadHumanModel");
+
         if (isMounted) {
           humanRef.current = humanLib;
           await humanLib.load();
+
           // await humanLib.load().then(() => {
           //   console.timeEnd("loadHumanModel");
           // });
+
           await humanLib.warmup();
           setHumanIsReady(true);
         }
@@ -96,7 +88,7 @@ export const HumanProvider: React.FC<HumanProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <HumanContext.Provider value={{ controls, humanIsReady, humanRef }}>
+    <HumanContext.Provider value={{ humanIsReady, humanRef }}>
       {children}
     </HumanContext.Provider>
   );

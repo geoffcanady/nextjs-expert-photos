@@ -1,20 +1,26 @@
+import { useEffect } from "react";
 import { useSteps } from "@/app/lib/context/step-context";
 import { useCameraContext } from "@/app/lib/context/camera-context";
 import ButtonPrimary from "@/app/components/Button/ButtonPrimary";
-import Prompt from "@/app/components/Prompt";
+import GesturePrompt from "@/app/components/GesturePrompt";
 import StaticImg from "@/app/components/StaticImg";
 import { StyledPhotoContainer } from "@/app/components/Photos/index.styles";
 import ButtonSecondary from "@/app/components/Button/ButtonSecondary";
+import { downloadPhoto } from "@/app/lib/utils/download-photo";
 import {
+  StyledActionsContainer,
   StyledBottomCol,
   StyledCol,
-  StyledActionsContainer,
-  StyledActionsContent,
 } from "@/app/styles/GlobalStyles";
 
 export default function CameraStep2() {
-  const { handleBgRemoval, photos, setPhotos } = useCameraContext();
-  const { handleNextStep, handlePrevStep } = useSteps();
+  const { handleBgRemoval, photos, setPhotos, setShowCountdown } =
+    useCameraContext();
+  const { handleNextStep, setCurrentStep } = useSteps();
+
+  useEffect(() => {
+    setShowCountdown(false);
+  }, []);
 
   return (
     <>
@@ -26,7 +32,7 @@ export default function CameraStep2() {
             // sizes="100vw"
             style={{
               backgroundColor: "white",
-              borderRadius: "50%",
+              borderRadius: 16,
               height: "auto",
               objectFit: "cover",
               transform: "scaleX(-1)",
@@ -38,27 +44,27 @@ export default function CameraStep2() {
         </StyledPhotoContainer>
       </StyledCol>
       <StyledBottomCol>
-        <StyledActionsContent>
-          <Prompt $alignment="center">How does it look?</Prompt>
-          <StyledActionsContainer>
-            <ButtonSecondary
-              $block="true"
-              label="Retake"
-              onClick={() => {
-                handlePrevStep();
-                setPhotos([]);
-              }}
-            />
-            <ButtonPrimary
-              $block="true"
-              label="Use photo"
-              onClick={() => {
-                handleBgRemoval();
-                handleNextStep();
-              }}
-            />
-          </StyledActionsContainer>
-        </StyledActionsContent>
+        <div style={{ marginBottom: "16px" }} />
+        <GesturePrompt>How does it look?</GesturePrompt>
+        <StyledActionsContainer>
+          <ButtonPrimary
+            // $block="true"
+            // label="Use photo"
+            label="Continue"
+            onClick={() => {
+              // downloadPhoto(photos[0]);
+              handleBgRemoval();
+              handleNextStep();
+            }}
+          />
+          <ButtonSecondary
+            label="Retake"
+            onClick={() => {
+              setCurrentStep(1);
+              setPhotos([]);
+            }}
+          />
+        </StyledActionsContainer>
       </StyledBottomCol>
     </>
   );

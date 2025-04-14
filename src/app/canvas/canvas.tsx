@@ -20,16 +20,18 @@ export default function CameraCanvas() {
   const { controls } = useHumanContext();
 
   useEffect(() => {
-    (async () => {
+    console.log("hello")(async () => {
       const devices = await navigator?.mediaDevices?.enumerateDevices();
+      console.log("devices: ", devices);
 
       if (devices) {
         const videoDevices = devices.filter((i) => i.kind == "videoinput");
-        setActiveDeviceId(videoDevices[0].deviceId);
+        // console.log("deviceId: ", videoDevices?.[0]?.deviceId);
+        setActiveDeviceId(videoDevices?.[0]?.deviceId);
         setDevices(videoDevices);
 
         if (videoDevices.length > 1) {
-          setActiveDeviceId(videoDevices[0].deviceId);
+          setActiveDeviceId(videoDevices?.[0]?.deviceId);
         }
       }
     })();

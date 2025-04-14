@@ -26,23 +26,23 @@ export enum GestureFeedbackMessages {
   // Head / no head present.
   NoFace = "No face detected",
   // Proximity
-  TooFar = "Move closer to the camera",
-  TooClose = "Move away from the camera",
+  TooFar = "Move closer",
+  TooClose = "Move further away ",
   // Hands
   Hands = "Keep your hands down",
   // Centered vertically / horizontally w/in the camera guide
-  OffCenter = "Center you face in the camera",
+  OffCenter = "Center your face",
   // Chin turned left/right
-  HeadTurnedLeft = "Look forward",
-  HeadTurnedRight = "Look forward",
+  HeadTurnedLeft = "Look straight ahead",
+  HeadTurnedRight = "Look straight ahead",
   // Chin tilted up/down
-  HeadTiltedUp = "Look forward",
-  HeadTiltedDown = "Look forward",
+  HeadTiltedUp = "Lower your chin",
+  HeadTiltedDown = "Raise your chin",
   // Head tilted towards shoulders
-  HeadTiltedLeft = "Look forward",
-  HeadTiltedRight = "Look forward",
+  HeadTiltedLeft = "Look straight ahead",
+  HeadTiltedRight = "Look straight ahead",
   // No position errors
-  Success = "Take a photo!",
+  Success = "Looks good, take photo",
   // Dormant
   Empty = "",
 }
@@ -68,6 +68,7 @@ export enum ErrorMessage {
 
 /** Path for static images */
 export enum AssetPrefixes {
-  // SbsegExpertPhotos = "https://sbseg-designtechnology.intuit.com/prototypes/gcanady/expert-photos",
+  // SbsegExpertPhotos = "https://sbseg-designtechnology.intuit.com/prototypes/gcanady/expert-photos/test-desktop",
+  // SbsegExpertPhotos = "https://sbseg-designtechnology.intuit.com/prototypes/gcanady/
   SbsegExpertPhotos = "",
 }

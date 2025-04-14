@@ -12,7 +12,7 @@ const animFadeInOut = keyframes`
   }
 `;
 
-export const StyledFadeBox = styled.div<{ $duration: number }>`
+export const StyledCameraFlash = styled.div<{ $duration: number }>`
   animation-name: ${animFadeInOut};
   animation-duration: ${(props) => props.$duration}ms;
   animation-fill-mode: forwards;

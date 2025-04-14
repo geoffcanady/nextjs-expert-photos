@@ -8,7 +8,7 @@ import { StyledPhotoContainer } from "@/app/components/Photos/index.styles";
 import {
   StyledBottomCol,
   StyledCol,
-  StyledActionsContent,
+  StyledPromptPanel,
 } from "@/app/styles/GlobalStyles";
 
 export default function CameraStep3() {
@@ -31,7 +31,8 @@ export default function CameraStep3() {
             alt="Select the image or re-take your photo."
             style={{
               backgroundColor: "white",
-              borderRadius: "50%",
+              // borderRadius: "50%",
+              borderRadius: 8,
               height: "auto",
               objectFit: "cover",
               transform: "scaleX(-1)",
@@ -43,12 +44,13 @@ export default function CameraStep3() {
         </StyledPhotoContainer>
       </StyledCol>
       <StyledBottomCol>
-        <StyledActionsContent>
+        <StyledPromptPanel>
           <Prompt>
             Removing background...
-            <br /> This should just take a moment
+            <br />
+            <span>This should just take a moment</span>
           </Prompt>
-        </StyledActionsContent>
+        </StyledPromptPanel>
       </StyledBottomCol>
     </>
   );

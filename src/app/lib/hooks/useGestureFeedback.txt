@@ -1,10 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Result } from "@vladmandic/human";
-import { GestureFeedbackMessages } from "@/app/lib/types/enums";
+import {
+  GestureFeedbackMessages,
+  GestureFeedbackMessagesType,
+} from "@/app/lib/types/enums";
 
 export const useGestureFeedback = (detectionResults: Result | null) => {
   const [gestureFeedbackMsg, setGestureFeedbackMsg] =
-    useState<GestureFeedbackMessages>(GestureFeedbackMessages.Empty);
+    useState<GestureFeedbackMessagesType>(GestureFeedbackMessages.Empty);
+  const lastUpdateTime = useRef(0);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Destructure results.
@@ -26,7 +31,7 @@ export const useGestureFeedback = (detectionResults: Result | null) => {
   const yaw = parseFloat(face?.rotation?.angle?.yaw.toFixed(2) || "0");
 
   /**
-   * Feedback priority:
+   * The gesture feedback/guidance only displays one message at a time using the following prioritization:
    * 1. No head/face present.
    * 2. Hands present
    * 3. Distance / proximity
@@ -36,7 +41,18 @@ export const useGestureFeedback = (detectionResults: Result | null) => {
    * 7. Head tilted towards shoulders
    */
 
-  const getMessageType = (): GestureFeedbackMessages => {
+  const [minHeadSize, setMinHeadSize] = useState(360);
+  const [maxHeadSize, setMaxHeadSize] = useState(580);
+  const [minHeadXPos, setMinHeadXPos] = useState(0.18);
+  const [maxHeadXPos, setMaxHeadXPos] = useState(0.4);
+  const [minHeadYPos, setMinHeadYPos] = useState(0.15);
+  const [maxHeadYPos, setMaxHeadYPos] = useState(0.3);
+  const [minChinXPos, setMinChinXPos] = useState(-0.25);
+  const [maxChinXPos, setMaxChinXPos] = useState(0.15);
+  const [minChinYPos, setMinChinYPos] = useState(-0.3);
+  const [maxChinYPos, setMaxChinYPos] = useState(0.25);
+
+  const getFeedbackMessage = (): GestureFeedbackMessagesType => {
     /**
      * No face detected.
      */
@@ -51,29 +67,37 @@ export const useGestureFeedback = (detectionResults: Result | null) => {
      * Distance from camera.
      */
     // console.log("boxSize: ", boxSize?.[0]);
-    if (boxSize && boxSize?.[0] < 350) return GestureFeedbackMessages.TooFar;
-    if (boxSize && boxSize?.[0] > 600) return GestureFeedbackMessages.TooClose;
+    if (boxSize && boxSize?.[0] < minHeadSize)
+      return GestureFeedbackMessages.TooFar;
+    if (boxSize && boxSize?.[0] > maxHeadSize)
+      return GestureFeedbackMessages.TooClose;
 
     /**
      * Head centering. Values decrease left side of screen to right.
      */
-    // Horizontal centering
-    // Left side
-    // console.log("box: ", box?.[0]);
-    if (box && box?.[0] > 0.4) return GestureFeedbackMessages.OffCenter;
-    // Right side
-    if (box && box?.[0] < 0.18) return GestureFeedbackMessages.OffCenter;
-    // Vertical centering
-    // Top
-    if (box && box?.[1] < 0.25) return GestureFeedbackMessages.OffCenter;
-    // Bottom
-    if (box && box?.[1] > 0.4) return GestureFeedbackMessages.OffCenter;
-
-    /**
-     * Chin up/down
-     */
-    if (pitch < -0.25) return GestureFeedbackMessages.HeadTiltedUp;
-    if (pitch > 0.25) return GestureFeedbackMessages.HeadTiltedDown;
+    if (
+      boxSize &&
+      boxSize?.[0] > minHeadSize &&
+      boxSize &&
+      boxSize?.[0] < maxHeadSize
+    ) {
+      // console.log("box: ", box?.[0]);
+      // Horizontal centering
+      // Left side
+      if (box && box?.[0] > maxHeadXPos)
+        return GestureFeedbackMessages.OffCenter;
+      // Right side
+      if (box && box?.[0] < minHeadXPos)
+        return GestureFeedbackMessages.OffCenter;
+      // Vertical centering
+      // Top
+      // console.log("box: ", box?.[1]);
+      if (box && box?.[1] < minHeadYPos)
+        return GestureFeedbackMessages.OffCenter;
+      // Bottom
+      if (box && box?.[1] > maxHeadYPos)
+        return GestureFeedbackMessages.OffCenter;
+    }
 
     /**
      * Chin left / right
@@ -82,19 +106,75 @@ export const useGestureFeedback = (detectionResults: Result | null) => {
     if (yaw > 0.15) return GestureFeedbackMessages.HeadTurnedRight;
 
     /**
+     * Chin up/down
+     */
+    if (pitch < -0.3) return GestureFeedbackMessages.HeadTiltedUp;
+    if (pitch > 0.25) return GestureFeedbackMessages.HeadTiltedDown;
+
+    /**
      * Head tilted towards shoulders
      */
     if (roll < -0.25) return GestureFeedbackMessages.HeadTiltedRight;
     if (roll > 0.25) return GestureFeedbackMessages.HeadTiltedLeft;
 
-    if (success) return GestureFeedbackMessages.Success;
-    return GestureFeedbackMessages.Empty;
+    // return GestureFeedbackMessages.Success;
   };
 
   useEffect(() => {
-    const messageType = getMessageType();
-    setGestureFeedbackMsg(messageType);
+    /**
+     * Updates the gesture feedback message based on detection results.
+     * It manages the timing of feedback updates to avoid rapid state changes and flickering of the gesture feedback text in the UI.
+     */
+    const currentTime = Date.now();
+    const feedbackMessage = getFeedbackMessage();
+
+    // If no feedback message is received, reset the state to success.
+    if (feedbackMessage === undefined) {
+      lastUpdateTime.current = 0;
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+      setGestureFeedbackMsg(GestureFeedbackMessages.Success);
+      return;
+    }
+
+    // Prevent updates if the last feedback was within 5 seconds.
+    if (currentTime - lastUpdateTime.current < 5000) {
+      return;
+    }
+
+    lastUpdateTime.current = currentTime;
+
+    // If a feedback message is detected, manage the display of the message.
+    if (feedbackMessage !== undefined) {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+
+      // Clear feedback
+      setGestureFeedbackMsg(GestureFeedbackMessages.Empty);
+
+      // Set feedback message after 1 second
+      // Clear feedback after 2 seconds
+      errorTimeoutRef.current = setTimeout(() => {
+        setGestureFeedbackMsg(feedbackMessage);
+        setTimeout(() => {
+          setGestureFeedbackMsg(GestureFeedbackMessages.Empty);
+        }, 2000);
+      }, 1000);
+    }
   }, [detectionResults]);
+
+  useEffect(() => {
+    /**
+     * Cleanup effect to clear any timeouts when the component is unmounted.
+     */
+    return () => {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return { gestureFeedbackMsg };
 };

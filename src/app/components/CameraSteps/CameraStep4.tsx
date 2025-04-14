@@ -9,27 +9,24 @@ import {
   StyledBottomCol,
   StyledCol,
   StyledActionsContainer,
-  StyledActionsContent,
 } from "@/app/styles/GlobalStyles";
-import Sparkles from "../Sparkles";
 
 export default function CameraStep4() {
-  const { handleBgReset, imgBgRemovedUrl, setPhotos } = useCameraContext();
+  const { resetCamera, imgBgRemovedUrl } = useCameraContext();
   const { setCurrentStep } = useSteps();
 
   return (
     <>
       <StyledCol>
         <StyledPhotoContainer>
-          <Sparkles />
           {imgBgRemovedUrl && (
             <StaticImg
               src={imgBgRemovedUrl}
               alt="Select the image or re-take your photo."
               style={{
                 backgroundColor: "white",
-                borderRadius: "50%",
-                boxShadow: "0px 4px 16px 0 rgba(0, 0, 0, 0.2)",
+                borderRadius: 8,
+                border: "solid 1px rgba(0, 0 , 0, 0.15)",
                 height: "auto",
                 objectFit: "cover",
                 transform: "scaleX(-1)",
@@ -43,28 +40,21 @@ export default function CameraStep4() {
       </StyledCol>
 
       <StyledBottomCol>
-        <StyledActionsContent>
-          <Prompt>
-            Well done! <br />
-            If everything looks good, click Submit photo.
-          </Prompt>
-          <StyledActionsContainer>
-            <ButtonSecondary
-              label="Retake"
-              onClick={() => {
-                handleBgReset();
-                setCurrentStep(2);
-                setPhotos([]);
-              }}
-              $block="true"
-            />
-            <ButtonPrimary
-              label="Submit photo"
-              onClick={() => {}}
-              $block="true"
-            />
-          </StyledActionsContainer>
-        </StyledActionsContent>
+        <Prompt>
+          Well done!
+          <span>If everything looks good, click Submit photo.</span>
+        </Prompt>
+        <StyledActionsContainer>
+          <ButtonPrimary label="Submit and continue" onClick={() => {}} />
+
+          <ButtonSecondary
+            label="Retake"
+            onClick={() => {
+              resetCamera();
+              setCurrentStep(1);
+            }}
+          />
+        </StyledActionsContainer>
       </StyledBottomCol>
     </>
   );

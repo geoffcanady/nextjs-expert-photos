@@ -8,15 +8,20 @@ export const StyledPrompt = styled.div<{ $alignment: string }>`
   align-items: center;
   color: #2b3135;
   display: flex;
-  font-size: 18px;
+  flex-direction: column;
+  font-size: 24px;
   font-style: normal;
   font-weight: 400;
   justify-content: center;
   line-height: 30px;
-  min-height: 62px;
-  padding-top: 88px;
+  min-height: 30px;
+  /* padding-top: 88px; */
   text-align: ${({ $alignment }) =>
     $alignment === "left" ? "left" : "center"};
+
+  span {
+    font-size: 18px;
+  }
 `;
 
 export const StyledLoadingPrompt = styled.div`

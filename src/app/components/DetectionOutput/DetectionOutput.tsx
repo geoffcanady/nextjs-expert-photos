@@ -28,7 +28,7 @@ export default function DetectionOutput({
    * Face
    */
   const face = results?.face[0];
-  console.log("face: ", face);
+  // console.log("face: ", face);
   const angle = face?.rotation?.angle;
   const pitch = angle?.pitch.toFixed(2);
   const roll = angle?.roll.toFixed(2);
@@ -87,20 +87,18 @@ export default function DetectionOutput({
         })}
       </StyledOutputValue>
 
-      {controls.rotation && (
-        <>
-          <StyledSectionTitle $micro={$micro}>Rotation</StyledSectionTitle>
-          <StyledOutputValue $micro={$micro}>{`Yaw: chin left/right: ${
-            yaw ? yaw : ""
-          }`}</StyledOutputValue>
-          <StyledOutputValue $micro={$micro}>{`Roll: tilt left/right: ${
-            roll ? roll : ""
-          }`}</StyledOutputValue>
-          <StyledOutputValue $micro={$micro}>{`Pitch: chin up/down: ${
-            pitch ? pitch : ""
-          }`}</StyledOutputValue>
-        </>
-      )}
+      <>
+        <StyledSectionTitle $micro={$micro}>Rotation</StyledSectionTitle>
+        <StyledOutputValue $micro={$micro}>{`Yaw: chin left/right: ${
+          yaw ? yaw : ""
+        }`}</StyledOutputValue>
+        <StyledOutputValue $micro={$micro}>{`Roll: tilt left/right: ${
+          roll ? roll : ""
+        }`}</StyledOutputValue>
+        <StyledOutputValue $micro={$micro}>{`Pitch: chin up/down: ${
+          pitch ? pitch : ""
+        }`}</StyledOutputValue>
+      </>
 
       {controls?.body && (
         <StyledSectionTitle $micro={$micro}>Pose</StyledSectionTitle>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Leva } from "leva";
 import { useSteps } from "@/app/lib/context/step-context";
 import { CameraProvider } from "@/app/lib/context/camera-context";
 import { HumanProvider } from "@/app/lib/context/human-context";
@@ -9,42 +8,60 @@ import CameraStep1 from "@/app/components/CameraSteps/CameraStep1";
 import CameraStep2 from "@/app/components/CameraSteps/CameraStep2";
 import CameraStep3 from "@/app/components/CameraSteps/CameraStep3";
 import CameraStep4 from "@/app/components/CameraSteps/CameraStep4";
+import CameraStepError from "@/app/components/CameraSteps/CameraStepError";
 import {
   StyledAppContainer,
-  StyledMainCol,
-  StyledRadialBlur,
+  StyledMainColHome,
 } from "@/app/styles/GlobalStyles";
-import RadialGrad from "./components/RadialGrad";
+import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
   const { currentStep } = useSteps();
-  // console.log("currentStep: ", currentStep);
 
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <OnboardingStep1 />;
-      case 2:
         return <CameraStep1 />;
-      case 3:
+      case 2:
         return <CameraStep2 />;
-      case 4:
+      case 3:
         return <CameraStep3 />;
-      case 5:
+      case 4:
         return <CameraStep4 />;
+      case "photo-error":
+        return <CameraStepError />;
+      default:
+        return <CameraStep1 />;
     }
   };
 
+  useEffect(() => {
+    const setVhProperty = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    };
+
+    setVhProperty();
+    window.addEventListener("resize", setVhProperty);
+
+    return () => {
+      window.removeEventListener("resize", setVhProperty);
+    };
+  }, []);
+
   return (
-    <StyledAppContainer>
-      <StyledMainCol>
-        <Leva collapsed hidden />
-        <CameraProvider>
-          <HumanProvider>{renderStep()}</HumanProvider>
-        </CameraProvider>
-      </StyledMainCol>
-      {/* <RadialGrad /> */}
-      <StyledRadialBlur />
-    </StyledAppContainer>
+    <>
+      <Navbar />
+      <div style={{ padding: 20, background: "#F4F5F8" }}>
+        <StyledAppContainer>
+          <StyledMainColHome>
+            <CameraProvider>
+              <HumanProvider>{renderStep()}</HumanProvider>
+            </CameraProvider>
+          </StyledMainColHome>
+        </StyledAppContainer>
+      </div>
+    </>
   );
 }
