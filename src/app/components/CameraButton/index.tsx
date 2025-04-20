@@ -11,7 +11,11 @@ interface CameraButtonProps {
 
 export default function CameraButton({ onClick, disabled }: CameraButtonProps) {
   return (
-    <StyledCameraButton disabled={disabled} onClick={() => onClick?.()}>
+    <StyledCameraButton
+      aria-label="Take your photo"
+      disabled={disabled}
+      onClick={() => onClick?.()}
+    >
       <StyledButtonRing />
       <StyledButtonInner />
     </StyledCameraButton>

@@ -3,6 +3,7 @@ import { AspectRatio } from "@/app/lib/types/types";
 import { initCameraStream } from "@/app/lib/utils/camera-utils";
 import { Stream } from "@/app/lib/types/types";
 import { useCameraContext } from "../context/camera-context";
+import { useGlobalContext } from "../context/global-context";
 
 export const useCameraStream = ({
   aspectRatio,
@@ -16,6 +17,7 @@ export const useCameraStream = ({
   const [notSupported, setNotSupported] = useState<boolean>(false);
   const [permissionDenied, setPermissionDenied] = useState<boolean>(false);
   const { currentFacingMode, setCurrentFacingMode } = useCameraContext();
+  const { cameraZoom } = useGlobalContext();
 
   useEffect(() => {
     const updateStreamAndCameras = async () => {
@@ -28,11 +30,12 @@ export const useCameraStream = ({
         setNotSupported,
         setPermissionDenied,
         videoSourceDeviceId,
+        cameraZoom,
       });
     };
 
     updateStreamAndCameras();
-  }, [currentFacingMode, videoSourceDeviceId]);
+  }, [currentFacingMode, videoSourceDeviceId, cameraZoom]);
 
   const switchCamera = () => {
     if (numberOfCameras < 1) {

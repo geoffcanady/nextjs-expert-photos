@@ -18,11 +18,15 @@ const GlobalStyles = createGlobalStyle`
 
   html,
   body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   body {
     border-radius: 60px;
-    color: #fff;
+    color: #21262A;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -33,70 +37,61 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 export const StyledAppContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 100vh;
-  min-height: 100svh;
-  position: relative;
-`;
-
-export const StyledMainCol = styled.main`
-  display: flex;
-  flex-direction: column;
-  width: clamp(320px, 100%, 600px);
-  height: 100vh;
-`;
-
-export const StyledCol = styled.div`
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0px 0px 0px 0px rgba(36, 28, 21, 0),
+    0px 0px 0px 1px rgba(36, 28, 21, 0.15);
   display: flex;
   flex-direction: column;
   flex: 1;
+  margin: 16px;
+  padding: 40px 16px;
   position: relative;
 `;
 
-export const StyledTopCol = styled.div`
-  margin-top: auto;
-  padding-bottom: 72px;
-  text-align: center;
-  z-index: 200;
-`;
+export const StyledPanelContainer = styled.div``;
 
-export const StyledBottomCol = styled(StyledCol)`
-  padding-bottom: 64px;
-`;
+export const StyledPromptPanel = styled(StyledPanelContainer)``;
 
-export const StyledActionsContent = styled.div`
-  border-radius: 16px;
-  border: 1px solid #e2e9ed;
-  background: #fff;
+export const StyledActionsLeftCol = styled.div``;
+
+export const StyledMobileActions = styled.div`
+  align-items: center;
   display: flex;
-  flex-direction: column;
-  height: 352px;
-  /* justify-content: center; */
-  gap: 24px;
-  padding: 12px 12px 32px;
-  position: relative;
-  z-index: 100;
+  justify-content: space-evenly;
+  margin: auto auto 0;
+  max-width: 400px;
+  width: 100%;
+
+  > * {
+    width: calc(100% / 3);
+  }
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+export const StyledDesktopActions = styled.div`
+  @media (max-width: 767px) {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 `;
 
 export const StyledActionsContainer = styled.div`
   align-items: center;
   display: flex;
-  justify-content: center;
-  margin-top: auto;
-  gap: 16px;
-  padding: 0 48px;
-`;
+  flex-direction: column;
 
-export const StyledRadialBlur = styled.div`
-  background-color: #7cbcff;
-  bottom: -80vh;
-  filter: blur(150px);
-  height: 600px;
-  position: fixed;
-  width: 1200px;
+  @media (max-width: 767px) {
+    margin-top: auto;
+  }
 `;
 
 export default GlobalStyles;

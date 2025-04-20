@@ -5,43 +5,41 @@ import React, {
   ReactNode,
   RefObject,
   useContext,
-  useState,
+  useReducer,
+  useEffect,
+  useRef,
+  useCallback,
 } from "react";
-
-import { Result } from "@vladmandic/human";
 import { removeBackground } from "@imgly/background-removal";
+import { useSteps } from "@/app/lib/context/step-context";
 import { CameraType, FacingMode } from "@/app/lib/types/types";
-import useFadeInOut from "@/app/lib/hooks/useFadeInOut";
+import useGestureFeedback from "../hooks/useGestureFeedback";
+import { GestureFeedbackMessages } from "../types/enums";
+import {
+  CameraState,
+  initialCameraState,
+  cameraReducer,
+  DetectionResult,
+} from "@/app/lib/reducer/camera-reducer";
 
-type DetectionResult = Result | null;
-
-interface CameraContextType {
-  currentStep: number;
-  currentFacingMode: FacingMode;
-  detectionResults: DetectionResult | null;
-  imgBgRemovedUrl: string | undefined;
-  isBgRemoved: boolean;
-  isVideoReady: boolean;
-  photos: string[];
-  showFade: boolean;
+export interface CameraContextType extends CameraState {
   handleBgRemoval: () => Promise<void>;
   handleBgReset: () => void;
-  handleNextStep: () => void;
-  handlePrevStep: () => void;
   handleTakePhoto: (camera: RefObject<CameraType>) => void;
   setCurrentFacingMode: React.Dispatch<React.SetStateAction<FacingMode>>;
-  setDetectionResults: React.Dispatch<
-    React.SetStateAction<DetectionResult | null>
-  >;
-  setIsVideoReady: (value: React.SetStateAction<boolean>) => void;
+  setDetectionResults: React.Dispatch<React.SetStateAction<DetectionResult>>;
+  setIsVideoReady: React.Dispatch<React.SetStateAction<boolean>>;
   setPhotos: React.Dispatch<React.SetStateAction<string[]>>;
+  setShowCountdown: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowFlash: React.Dispatch<React.SetStateAction<boolean>>;
+  resetCamera: () => void;
 }
 
 const CameraContext = createContext<CameraContextType | undefined>(undefined);
 
 export const useCameraContext = (): CameraContextType => {
   const context = useContext(CameraContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useCameraContext must be used within a CameraProvider");
   }
   return context;
@@ -52,65 +50,157 @@ interface CameraProviderProps {
 }
 
 export const CameraProvider: React.FC<CameraProviderProps> = ({ children }) => {
-  const [currentFacingMode, setCurrentFacingMode] =
-    useState<FacingMode>("user");
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [detectionResults, setDetectionResults] =
-    useState<DetectionResult | null>(null);
-  const [imgBgRemovedUrl, setImgBgRemovedUrl] = useState<string>("");
-  const [isBgRemoved, setIsBgRemoved] = useState<boolean>(false);
-  const [isVideoReady, setIsVideoReady] = useState<boolean>(false);
-  const [photos, setPhotos] = useState<string[]>([]);
-  const { showFade, triggerFade } = useFadeInOut(300);
-
-  const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
-
-  const handlePrevStep = () =>
-    setCurrentStep((prevStep) => Math.max(1, prevStep - 1));
+  const [state, dispatch] = useReducer(cameraReducer, initialCameraState);
+  const cameraRefInContext = useRef<RefObject<CameraType> | null>(null);
+  const { gestureFeedbackMsg } = useGestureFeedback(state.detectionResults);
+  const { handleNextStep, setCurrentStep } = useSteps();
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleTakePhoto = (camera: RefObject<CameraType>) => {
-    const photo = camera.current?.takePhoto();
-    if (photo !== undefined) {
-      setPhotos((prevPhotos) => [...prevPhotos, photo]);
-      triggerFade();
-    }
+    cameraRefInContext.current = camera;
+    dispatch({ type: "SET_SHOW_COUNTDOWN", payload: true });
+    dispatch({ type: "SET_COUNT", payload: 3 });
   };
 
+  /**
+   * 3-2-1 countdown effect. We don't display 0.
+   */
+  useEffect(() => {
+    if (!state.showCountdown || state.count <= 0) return;
+
+    countdownRef.current = setTimeout(() => {
+      dispatch({ type: "SET_COUNT", payload: state.count - 1 });
+    }, 1000);
+
+    return () => {
+      if (countdownRef.current) {
+        clearTimeout(countdownRef.current);
+      }
+    };
+  }, [state.count, state.showCountdown]);
+
+  /**
+   * Handle taking a photo when countdown reaches zero
+   */
+  useEffect(() => {
+    if (state.count !== 0) return;
+
+    const camera = cameraRefInContext.current;
+    if (camera?.current) {
+      const photo = camera.current.takePhoto();
+      if (photo) {
+        dispatch({ type: "ADD_PHOTO", payload: photo });
+        dispatch({ type: "SET_SHOW_FLASH", payload: true });
+      }
+    }
+
+    const delay = setTimeout(() => {
+      if (gestureFeedbackMsg !== GestureFeedbackMessages.Success) {
+        setCurrentStep("photo-error");
+      } else {
+        handleNextStep();
+      }
+
+      dispatch({ type: "SET_SHOW_COUNTDOWN", payload: false });
+      dispatch({ type: "SET_SHOW_FLASH", payload: false });
+
+      if (state.isVideoReady) {
+        dispatch({ type: "SET_VIDEO_READY", payload: false });
+      }
+    }, 300);
+
+    return () => clearTimeout(delay);
+  }, [state.count, gestureFeedbackMsg]);
+
   const handleBgRemoval = async () => {
-    const imageBlob = await removeBackground(photos[0]);
+    if (state.photos.length === 0) return;
+    const imageBlob = await removeBackground(state.photos[0]);
     const url = URL.createObjectURL(imageBlob);
-    setImgBgRemovedUrl(url);
-    setIsBgRemoved(true);
+    dispatch({ type: "SET_BG_REMOVED", payload: { url, isRemoved: true } });
   };
 
   const handleBgReset = () => {
-    setImgBgRemovedUrl("");
-    setIsBgRemoved(false);
+    dispatch({ type: "RESET_BG" });
+  };
+
+  const setCurrentFacingMode = (value: React.SetStateAction<FacingMode>) => {
+    dispatch({
+      type: "SET_FACING_MODE",
+      payload:
+        typeof value === "function"
+          ? (value as Function)(state.currentFacingMode)
+          : value,
+    });
+  };
+
+  const setDetectionResults = useCallback(
+    (value: React.SetStateAction<DetectionResult>) => {
+      dispatch({
+        type: "SET_DETECTION_RESULTS",
+        payload:
+          typeof value === "function"
+            ? (value as (prev: DetectionResult) => DetectionResult)(
+                state.detectionResults
+              )
+            : value,
+      });
+    },
+    [state.detectionResults]
+  );
+
+  const setIsVideoReady = (value: React.SetStateAction<boolean>) => {
+    dispatch({
+      type: "SET_VIDEO_READY",
+      payload:
+        typeof value === "function"
+          ? (value as Function)(state.isVideoReady)
+          : value,
+    });
+  };
+
+  const setPhotos = (value: React.SetStateAction<string[]>) => {
+    dispatch({ type: "RESET_BG" });
+  };
+
+  const setShowCountdown = (value: React.SetStateAction<boolean>) => {
+    dispatch({
+      type: "SET_SHOW_COUNTDOWN",
+      payload:
+        typeof value === "function"
+          ? (value as Function)(state.showCountdown)
+          : value,
+    });
+  };
+
+  const setShowFlash = (value: React.SetStateAction<boolean>) => {
+    dispatch({
+      type: "SET_SHOW_FLASH",
+      payload:
+        typeof value === "function"
+          ? (value as Function)(state.showFlash)
+          : value,
+    });
+  };
+
+  const resetCamera = () => {
+    dispatch({ type: "RESET_CAMERA" });
+  };
+
+  const value: CameraContextType = {
+    ...state,
+    handleBgRemoval,
+    handleBgReset,
+    handleTakePhoto,
+    setCurrentFacingMode,
+    setDetectionResults,
+    setIsVideoReady,
+    setPhotos,
+    setShowCountdown,
+    setShowFlash,
+    resetCamera,
   };
 
   return (
-    <CameraContext.Provider
-      value={{
-        currentFacingMode,
-        currentStep,
-        detectionResults,
-        imgBgRemovedUrl,
-        isBgRemoved,
-        isVideoReady,
-        photos,
-        showFade,
-        handleBgRemoval,
-        handleBgReset,
-        handleNextStep,
-        handlePrevStep,
-        handleTakePhoto,
-        setCurrentFacingMode,
-        setDetectionResults,
-        setIsVideoReady,
-        setPhotos,
-      }}
-    >
-      {children}
-    </CameraContext.Provider>
+    <CameraContext.Provider value={value}>{children}</CameraContext.Provider>
   );
 };

@@ -4,17 +4,20 @@ const nextConfig = {
     styledComponents: true,
   },
   images: {
-    domains: ["sbseg-designtechnology.intuit.com"],
+    // domains: ["sbseg-designtechnology.intuit.com"],
   },
   output: "export",
 
-  /** To build for
+  /** To build dist
    *
    * 1. Uncomment `basepath`
    * 2. Go to `types/enums.ts` and update AssetPrefixes to use `SbsegExpertPhotos`
    */
 
   // basePath: "/prototypes/gcanady/expert-photos",
+  // basePath: "/prototypes/gcanady/expert-photos/test-desktop",
+  // basePath: "/prototypes/gcanady/expert-photos/test-mobile",
+  // basePath: "/prototypes/gcanady/10271978",
 
   // ** Build (optional) ** change the output directory `out` -> `dist`
   // distDir: "expert-photos",

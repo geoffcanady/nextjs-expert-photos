@@ -2,7 +2,7 @@
 
 import {
   forwardRef,
-  useCallback,
+  // useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -12,7 +12,12 @@ import { useCameraContext } from "@/app/lib/context/camera-context";
 import { useCameraStream } from "@/app/lib/hooks/useCameraStream";
 import { useCamera } from "@/app/lib/hooks/useCamera";
 import useDetectAndDraw from "@/app/lib/hooks/useDetectAndDraw";
-import { StyledVideo, StyledErrorMessage, StyledCanvas } from "./Camera.styles";
+import {
+  StyledCanvas,
+  StyledErrorMessage,
+  StyledVideo,
+  StyledVideoContainer,
+} from "./Camera.styles";
 import { useHumanContext } from "@/app/lib/context/human-context";
 
 export const Camera = forwardRef<unknown, CameraProps>(
@@ -91,28 +96,28 @@ export const Camera = forwardRef<unknown, CameraProps>(
     /**
      * Canvas resizing to match the video dimensions.
      */
-    const resizeCanvas = useCallback(() => {
-      if (videoRef.current && canvasRef.current) {
-        canvasRef.current.width = videoRef.current.videoWidth;
-        canvasRef.current.height = videoRef.current.videoHeight;
-      }
-    }, [videoRef, canvasRef]);
+    // const resizeCanvas = useCallback(() => {
+    //   if (videoRef.current && canvasRef.current) {
+    //     canvasRef.current.width = videoRef.current.videoWidth;
+    //     canvasRef.current.height = videoRef.current.videoHeight;
+    //   }
+    // }, [videoRef, canvasRef]);
 
-    useEffect(() => {
-      const video = videoRef.current;
+    // useEffect(() => {
+    //   const video = videoRef.current;
 
-      if (video) {
-        // Listen for when video metadata is loaded to adjust canvas size
-        video.addEventListener("loadedmetadata", resizeCanvas);
+    //   if (video) {
+    //     // Listen for when video metadata is loaded to adjust canvas size
+    //     video.addEventListener("loadedmetadata", resizeCanvas);
 
-        return () => {
-          video.removeEventListener("loadedmetadata", resizeCanvas);
-        };
-      }
-    }, [resizeCanvas]);
+    //     return () => {
+    //       video.removeEventListener("loadedmetadata", resizeCanvas);
+    //     };
+    //   }
+    // }, [resizeCanvas]);
 
     return (
-      <>
+      <StyledVideoContainer>
         {notSupported ? (
           <StyledErrorMessage>
             {errorMessages.noCameraAccessible}
@@ -125,20 +130,16 @@ export const Camera = forwardRef<unknown, CameraProps>(
         ) : null}
         <StyledVideo
           ref={videoRef}
-          $aspectratio={aspectRatio}
           autoPlay={true}
           id="video"
-          $mirrored={currentFacingMode === "user" ? true : false}
           muted={true}
-          onLoadedData={() => {
-            videoReadyCallback();
-          }}
+          onLoadedData={() => videoReadyCallback()}
           playsInline={true}
-          width={aspectRatio === "cover" ? "1280" : "1080"}
-          height={aspectRatio === "cover" ? "720" : "1080"}
+          width={1080}
+          height={1080}
         />
-        <StyledCanvas ref={canvasRef} $showCanvas={controls.showDetection} />
-      </>
+        <StyledCanvas ref={canvasRef} />
+      </StyledVideoContainer>
     );
   }
 );

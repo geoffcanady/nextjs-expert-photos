@@ -37,7 +37,7 @@ export const StyledButtonPrimary = styled(StyledButton)`
 `;
 
 export const StyledButtonSecondary = styled(StyledButton)`
-  background-color: #e2e9ed;
-  border-color: #e2e9ed;
-  color: #21262a;
+  background-color: white;
+  border-color: white;
+  color: #2b77cc;
 `;

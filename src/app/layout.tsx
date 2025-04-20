@@ -3,6 +3,9 @@ import localFont from "next/font/local";
 import StyledComponentsRegistry from "@/app/lib/registry";
 import GlobalStyles from "@/app/styles/GlobalStyles";
 import { StepProvider } from "@/app/lib/context/step-context";
+import { GlobalProvider } from "@/app/lib/context/global-context";
+import { CameraProvider } from "@/app/lib/context/camera-context";
+import { HumanProvider } from "@/app/lib/context/human-context";
 
 const avenir = localFont({
   src: [
@@ -44,7 +47,13 @@ export default function RootLayout({
       <body className={avenir.className}>
         <StyledComponentsRegistry>
           <GlobalStyles />
-          <StepProvider>{children}</StepProvider>
+          <GlobalProvider>
+            <StepProvider>
+              <CameraProvider>
+                <HumanProvider>{children}</HumanProvider>
+              </CameraProvider>
+            </StepProvider>
+          </GlobalProvider>
         </StyledComponentsRegistry>
       </body>
     </html>

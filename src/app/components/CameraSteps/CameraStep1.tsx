@@ -1,60 +1,85 @@
 "use client";
 
-// import { useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import styled from "styled-components";
 import { CameraType, FacingMode } from "@/app/lib/types/types";
 import { GestureFeedbackMessages } from "@/app/lib/types/enums";
+import { messages } from "@/app/lib/constants/messages";
+
+import { useGlobalContext } from "@/app/lib/context/global-context";
 import { useSteps } from "@/app/lib/context/step-context";
 import { useCameraContext } from "@/app/lib/context/camera-context";
-import { useHumanContext } from "@/app/lib/context/human-context";
+
 import { useGestureFeedback } from "@/app/lib/hooks/useGestureFeedback";
-import { messages } from "@/app/lib/constants/messages";
+import useHandleKeyDown from "@/app/lib/hooks/useHandleKeydown";
+
+import ButtonSecondary from "@/app/components/Button/ButtonSecondary";
+import ButtonPrimary from "@/app/components/Button/ButtonPrimary";
 import { Camera } from "@/app/components/Camera/Camera";
+import CameraSwitchButton from "@/app/components/CameraSwitchButton";
+import CameraBanner from "@/app/components/CameraBanner";
+import CameraButton from "@/app/components/CameraButton";
+import CameraFlash from "@/app/components/CameraFlash";
 import CameraGuide from "@/app/components/CameraGuide";
 import { CameraLoader } from "@/app/components/Loader";
-import FadeInOut from "@/app/components/FadeInOut";
-import GesturePrompt from "@/app/components/GesturePrompt";
+import DetectionOutput from "@/app/components/DetectionOutput/DetectionOutput";
+import { IconCamera } from "@/app/components/Icons";
+import GlobalControls from "@/app/components/GlobalControls/global-controls";
 import { StyledCanvasContainer } from "@/app/components/Camera/Camera.styles";
-import ButtonSecondary from "@/app/components/Button/ButtonSecondary";
-import ButtonPrimary from "../Button/ButtonPrimary";
+
 import {
-  StyledBottomCol,
-  StyledCol,
-  StyledActionsContainer,
-  StyledActionsContent,
+  StyledActionsLeftCol,
+  StyledDesktopActions,
+  StyledMobileActions,
 } from "@/app/styles/GlobalStyles";
+import { CountdownAlt2 } from "@/app/components/Countdown/CountdownAlt2";
+
+// For testing
+import { CountdownAlt5 } from "../Countdown/CountdownAlt5";
+import CameraBannerAlt from "../CameraBannerAlt";
 
 /** Mobile */
-import CameraButton from "@/app/components/CameraButton";
-import DetectionOutput from "@/app/components/DetectionOutput/DetectionOutput";
-import {
-  IconArrowLeft,
-  IconCamera,
-  IconCameraToggle,
-} from "@/app/components/Icons";
+// import CameraButton from "@/app/components/CameraButton";
+
+const StyledSpacebarPompt = styled.div`
+  color: #6b6c72;
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  padding: 8px 0;
+
+  span {
+    background-color: rgba(197, 225, 255, 0.3);
+    border-radius: 2px;
+  }
+`;
 
 export default function CameraStep1() {
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const camera = useRef<CameraType>(null);
   const [activeDeviceId, setActiveDeviceId] = useState<string | undefined>(
     undefined
   );
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [activeCamera, setActiveCamera] = useState<string>("front");
   const [disabled, setDisabled] = useState<boolean>(true);
 
-  const camera = useRef<CameraType>(null);
+  const { handlePrevStep } = useSteps();
   const {
+    count,
     detectionResults,
-    handleTakePhoto,
     isVideoReady,
+    showCountdown,
+    showFlash,
+    handleTakePhoto,
+    setCurrentFacingMode,
     setIsVideoReady,
-    showFade,
   } = useCameraContext();
-  const { handleNextStep, handlePrevStep } = useSteps();
   const { gestureFeedbackMsg } = useGestureFeedback(detectionResults);
-  const { controls } = useHumanContext();
-  const { currentFacingMode, setCurrentFacingMode } = useCameraContext();
+  const { countdownOption, showOutput } = useGlobalContext();
 
-  // To do: refactor to use `switchCamera` from `useCameraStream`.
+  // TODO: refactor to use `switchCamera` from `useCameraStream`.
   const toggleCamera = () => {
     setActiveCamera((prevCamera) => {
       let newCamera = prevCamera === "front" ? "back" : "front";
@@ -69,6 +94,8 @@ export default function CameraStep1() {
     });
   };
 
+  useHandleKeyDown({ camera, disabled });
+
   useEffect(() => {
     if (gestureFeedbackMsg === GestureFeedbackMessages.Success) {
       setDisabled(false);
@@ -78,72 +105,85 @@ export default function CameraStep1() {
   }, [gestureFeedbackMsg]);
 
   useEffect(() => {
-    (async () => {
-      const devices = await navigator?.mediaDevices?.enumerateDevices();
+    let isMounted = true;
 
-      if (devices) {
-        const videoDevices = devices.filter((i) => i.kind == "videoinput");
-        setActiveDeviceId(videoDevices[0].deviceId);
-        setDevices(videoDevices);
+    const fetchDevices = async () => {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      if (!isMounted) return;
 
-        if (videoDevices.length > 1) {
-          const newActiveDeviceId =
-            activeCamera === "front"
-              ? videoDevices[0].deviceId
-              : videoDevices[1].deviceId;
-          setActiveDeviceId(newActiveDeviceId);
-        }
-      }
-    })();
-  }, [devices, activeCamera, activeDeviceId]);
+      const videoDevices = devices.filter((i) => i.kind === "videoinput");
+
+      setDevices(videoDevices);
+
+      setActiveDeviceId((prev) => {
+        const newDeviceId =
+          activeCamera === "front"
+            ? videoDevices[0]?.deviceId
+            : videoDevices[1]?.deviceId;
+
+        return prev !== newDeviceId ? newDeviceId : prev;
+      });
+    };
+
+    fetchDevices();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeCamera]);
 
   return (
     <>
-      <StyledCol>
-        <StyledCanvasContainer $aspectratio={1 / 1}>
-          {showFade && <FadeInOut duration={300} />}
-          {isVideoReady ? (
-            <CameraGuide gestureFeedbackMsg={gestureFeedbackMsg} />
-          ) : (
-            <CameraLoader />
-          )}
+      <GlobalControls />
+      <StyledCanvasContainer>
+        {!isVideoReady && <CameraLoader />}
+        {showFlash && <CameraFlash duration={300} />}
+        {isVideoReady && !showCountdown && <CameraGuide />}
 
-          <Camera
-            ref={camera}
-            aspectRatio={1 / 1}
-            errorMessages={messages.errors}
-            numberOfCamerasCallback={() => {}}
-            // numberOfCamerasCallback={(i: any) => console.log("cam callback: ", i)}
-            // numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
-            videoSourceDeviceId={activeDeviceId}
-            videoReadyCallback={() => {
-              setIsVideoReady(true);
-            }}
-          />
-        </StyledCanvasContainer>
-      </StyledCol>
+        <CameraBanner disabled={disabled} />
 
-      <StyledBottomCol>
-        <StyledActionsContent>
-          <GesturePrompt>{isVideoReady && gestureFeedbackMsg}</GesturePrompt>
-          <StyledActionsContainer>
-            <ButtonSecondary label="Back" onClick={() => {}} $block="true" />
-            <ButtonPrimary
-              icon={<IconCamera />}
-              label="Take photo"
-              onClick={() => {
-                handleTakePhoto(camera);
-                setTimeout(() => {
-                  handleNextStep();
-                  setIsVideoReady(false);
-                }, 300);
-              }}
-              disabled={!isVideoReady || disabled}
-              $block="true"
-            />
-          </StyledActionsContainer>
-        </StyledActionsContent>
-      </StyledBottomCol>
+        {countdownOption === 2 && (
+          <CountdownAlt2 show={showCountdown} count={count} />
+        )}
+
+        <Camera
+          ref={camera}
+          aspectRatio={1 / 1}
+          errorMessages={messages.errors}
+          numberOfCamerasCallback={() => {}}
+          // numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
+          videoSourceDeviceId={activeDeviceId}
+          videoReadyCallback={() => {
+            setIsVideoReady(true);
+          }}
+        />
+      </StyledCanvasContainer>
+
+      {showOutput && (
+        <DetectionOutput $micro detectionResults={detectionResults} />
+      )}
+
+      <StyledMobileActions>
+        <StyledActionsLeftCol />
+        <CameraButton
+          onClick={() => handleTakePhoto(camera)}
+          disabled={!isVideoReady || disabled || showCountdown}
+        />
+        <CameraSwitchButton onClick={() => toggleCamera()} />
+      </StyledMobileActions>
+
+      <StyledDesktopActions>
+        <ButtonPrimary
+          icon={<IconCamera />}
+          label="Take photo"
+          onClick={() => handleTakePhoto(camera)}
+          disabled={!isVideoReady || disabled || showCountdown}
+        />
+        <StyledSpacebarPompt>
+          Or hit <span>spacebar</span> to take photo
+        </StyledSpacebarPompt>
+        <ButtonSecondary label="Back" onClick={() => handlePrevStep()} />
+      </StyledDesktopActions>
     </>
   );
 }

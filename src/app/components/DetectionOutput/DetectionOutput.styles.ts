@@ -11,8 +11,15 @@ export const StyledOutputContainer = styled.div<MicroProps>`
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   z-index: 200;
+  padding: 4px 8px 8px;
 
-  ${({ $micro }) =>
+  @media (min-width: 768px) {
+    position: absolute;
+    left: 20px;
+    top: 60px;
+  }
+
+  /* ${({ $micro }) =>
     $micro
       ? `
     position: relative;
@@ -23,8 +30,7 @@ export const StyledOutputContainer = styled.div<MicroProps>`
       top: 40px;
       left: 40px;
       padding: 8px 16px 16px;
-    
-    `}
+    `} */
 `;
 
 export const StyledSectionTitle = styled.h5<MicroProps>`

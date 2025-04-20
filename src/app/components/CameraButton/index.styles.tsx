@@ -4,31 +4,35 @@ export const StyledCameraButton = styled.button`
   align-items: center;
   all: unset;
   display: flex;
-  height: 50px;
+  height: 100px;
   justify-content: center;
   position: relative;
-  width: 50px;
-  padding: 10px;
+  width: 100px;
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
   }
 `;
 
 export const StyledButtonRing = styled.div`
   border-radius: 50%;
-  box-shadow: 0 0 0 8px rgb(255 255 255 / 0.6);
+  box-shadow: 0 0 0 8px rgba(224, 237, 255, 1);
+  transform: translate(-50%, -50%);
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 56px;
-  transform: translate(-50%, -50%);
-  width: 56px;
+  height: 82px;
+  width: 82px;
 `;
 
 export const StyledButtonInner = styled.div`
   border-radius: 50%;
-  background-color: white;
-  flex: 1;
-  width: 100%;
+  border: solid 2px #fff;
+  background-color: #2b77cc;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 80px;
+  width: 80px;
 `;
