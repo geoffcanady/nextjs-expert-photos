@@ -6,9 +6,11 @@ import CameraStep1 from "@/app/components/CameraSteps/CameraStep1";
 import CameraStep2 from "@/app/components/CameraSteps/CameraStep2";
 import CameraStep3 from "@/app/components/CameraSteps/CameraStep3";
 import CameraStep4 from "@/app/components/CameraSteps/CameraStep4";
+import CameraStepFail from "./components/CameraSteps/CameraStepFail";
 import CameraStepError from "@/app/components/CameraSteps/CameraStepError";
 import { StyledAppContainer } from "@/app/styles/GlobalStyles";
 import Navbar from "./components/Navbar";
+
 
 export default function Home() {
   const { currentStep } = useSteps();
@@ -23,6 +25,8 @@ export default function Home() {
         return <CameraStep3 />;
       case 4:
         return <CameraStep4 />;
+      case "hat-fail":
+        return <CameraStepFail />;
       case "photo-error":
         return <CameraStepError />;
       default:

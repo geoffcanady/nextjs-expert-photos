@@ -1,5 +1,5 @@
 import { Result } from "@vladmandic/human";
-import { CameraType, FacingMode } from "@/app/lib/types/types";
+import { FacingMode } from "@/app/lib/types/types";
 
 export type DetectionResult = Result | null;
 
@@ -13,6 +13,7 @@ export interface CameraState {
   showCountdown: boolean;
   showFlash: boolean;
   count: number;
+  hatCheckResult: string;
 }
 
 export type CameraAction =
@@ -25,7 +26,8 @@ export type CameraAction =
   | { type: "SET_SHOW_FLASH"; payload: boolean }
   | { type: "SET_BG_REMOVED"; payload: { url: string; isRemoved: boolean } }
   | { type: "RESET_BG" }
-  | { type: "RESET_CAMERA" };
+  | { type: "RESET_CAMERA" }
+  | { type: "SET_HAT_CHECK_RESULT"; payload: string };
 
 export const initialCameraState: CameraState = {
   currentFacingMode: "user",
@@ -37,6 +39,7 @@ export const initialCameraState: CameraState = {
   showCountdown: false,
   showFlash: false,
   count: 3,
+  hatCheckResult: "",
 };
 
 export const cameraReducer = (
@@ -68,6 +71,8 @@ export const cameraReducer = (
       return { ...state, imgBgRemovedUrl: "", isBgRemoved: false };
     case "RESET_CAMERA":
       return initialCameraState;
+    case "SET_HAT_CHECK_RESULT":
+      return { ...state, hatCheckResult: action.payload };
     default:
       return state;
   }

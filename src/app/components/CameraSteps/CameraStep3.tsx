@@ -23,7 +23,7 @@ export default function CameraStep3() {
         <OverlayLoader />
         <StaticImg
           src={photos[0]}
-          alt="Select the image or re-take your photo."
+          alt="Removing background."
           style={{
             backgroundColor: "white",
             borderRadius: 8,

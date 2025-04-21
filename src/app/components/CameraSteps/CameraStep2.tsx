@@ -14,7 +14,7 @@ import GesturePrompt from "@/app/components/GesturePrompt";
 import { downloadPhoto } from "@/app/lib/utils/download-photo";
 
 export default function CameraStep2() {
-  const { handleBgRemoval, photos, setPhotos, setShowCountdown } =
+  const { handleHatCheck, handleBgRemoval, photos, setPhotos, setShowCountdown } =
     useCameraContext();
   const { handleNextStep, setCurrentStep } = useSteps();
 
@@ -44,7 +44,7 @@ export default function CameraStep2() {
 
       <Prompt>How does it look?</Prompt>
       <StyledActionsContainer>
-        <ButtonPrimary
+        {/* <ButtonPrimary
           // $block="true"
           // label="Use photo"
           label="Continue"
@@ -53,7 +53,8 @@ export default function CameraStep2() {
             handleBgRemoval();
             handleNextStep();
           }}
-        />
+        /> */}
+        <ButtonPrimary label="Continue" onClick={() => handleHatCheck()} />
         <ButtonSecondary
           label="Retake"
           onClick={() => {
@@ -62,14 +63,6 @@ export default function CameraStep2() {
           }}
         />
       </StyledActionsContainer>
-      {/* <StyledCol> */}
-      {/* <StyledPhotoContainer> */}
-
-      {/* </StyledPhotoContainer> */}
-      {/* </StyledCol> */}
-      {/* <StyledBottomCol> */}
-
-      {/* </StyledBottomCol> */}
     </>
   );
 }
